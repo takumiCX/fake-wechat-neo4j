@@ -4,6 +4,7 @@ import com.zju.fakewechat.domain.User;
 import com.zju.fakewechat.model.response.Response;
 import com.zju.fakewechat.services.UserService;
 import com.zju.fakewechat.util.EncryptUtils;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,7 @@ import java.util.Optional;
 @RequestMapping("/user")
 @Slf4j
 @Validated
+@Api("用户操作相关接口")
 public class UserController {
 
 
@@ -39,7 +41,9 @@ public class UserController {
      */
     @GetMapping("/check")
     @ResponseBody
-    public Response<Boolean> check(@RequestParam("userName") String userName) {
+    @ApiOperation(value = "校验用户名是否可用,true:可用;false:该用户名已经存在,不可用")
+    @ApiResponse(code = 200, message = "success=true")
+    public Response<Boolean> check(@RequestParam("userName") @NotBlank(message = "用户名不能为空!") String userName) {
 
         Response<Boolean> response;
         boolean isExists = false;
@@ -61,13 +65,18 @@ public class UserController {
 
     @PostMapping(value = "/register")
     @ResponseBody
-    public Response<User> register(@RequestParam("userName")@NotBlank(message = "userName不能为空!") String userName,
-                                   @RequestParam("password")@NotBlank(message = "password不能为空!") String password) {
+    @ApiOperation("注册新用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userName", value = "用户名"),
+            @ApiImplicitParam(name = "password", value = "密码")
+    })
+    public Response<User> register(@RequestParam("userName") @NotBlank(message = "userName不能为空!") String userName,
+                                   @RequestParam("password") @NotBlank(message = "password不能为空!") String password) {
 
         Response<User> response;
         try {
 
-            User user = userService.addUser(userName,password);
+            User user = userService.addUser(userName, password);
 
             response = Response.success(user);
 
@@ -81,6 +90,7 @@ public class UserController {
 
     /**
      * 登录
+     *
      * @param userName
      * @param password
      * @param session
@@ -88,9 +98,14 @@ public class UserController {
      */
     @PostMapping("/login")
     @ResponseBody
-    public Response<User> login(@RequestParam("userName")@NotBlank(message = "userName不能为空!") String userName,
-                                @RequestParam("password")@NotBlank(message = "password不能为空!") String password,
-                                HttpSession session)  {
+    @ApiOperation("用户登录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userName", value = "用户名"),
+            @ApiImplicitParam(name = "password", value = "密码")
+    })
+    public Response<User> login(@RequestParam("userName") @NotBlank(message = "userName不能为空!") String userName,
+                                @RequestParam("password") @NotBlank(message = "password不能为空!") String password,
+                                HttpSession session) {
         Response<User> response;
         try {
             Optional<User> userOptional = userService.findUser(userName, EncryptUtils.encoderByMd5(password));
@@ -114,22 +129,29 @@ public class UserController {
 
     /**
      * 添加朋友
+     *
      * @param userId
      * @param friendName
      * @return
      */
     @PostMapping("/addFriend")
     @ResponseBody
-    public Response<Boolean> addFriend(@RequestParam("userId")@NotNull(message = "userId不能为null!") Long userId,
-                                       @RequestParam("friendName")@NotBlank(message = "friendName不能为空!") String friendName) {
+    @ApiOperation("为当前用户添加朋友")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "当前登录用户的用户id"),
+            @ApiImplicitParam(name = "friendName", value = "要添加为朋友的用户名")
+    }
+    )
+    public Response<Boolean> addFriend(@RequestParam("userId") @NotNull(message = "userId不能为null!") Long userId,
+                                       @RequestParam("friendName") @NotBlank(message = "friendName不能为空!") String friendName) {
 
         Response<Boolean> response;
         try {
-            userService.makeFriend(userId,friendName);
+            userService.makeFriend(userId, friendName);
             response = Response.success(true);
 
         } catch (Exception e) {
-            log.error("addFriend error,userId:{},friendName:{}",userId,friendName, e);
+            log.error("addFriend error,userId:{},friendName:{}", userId, friendName, e);
             response = Response.failed(e);
         }
         return response;
@@ -138,12 +160,17 @@ public class UserController {
 
     /**
      * 查询所有朋友
+     *
      * @param userId 用户Id
      * @return
      */
     @GetMapping("/friends/")
     @ResponseBody
-    public Response<List<User>> listAllFriends(@RequestParam("userId")@NotNull(message = "userId不能为null!") long userId) {
+    @ApiOperation("查询和当前用户为朋友关系的所有用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户id")
+    })
+    public Response<List<User>> listAllFriends(@RequestParam("userId") @NotNull(message = "userId不能为null!") Long userId) {
 
         Response<List<User>> response;
         try {
@@ -159,5 +186,37 @@ public class UserController {
         return response;
 
     }
+
+
+    /**
+     * 查询当前用户(userId)某个朋友(friendId)的朋友但和当前用户不是朋友关系的所有用户,即二度人脉
+     *
+     * @param userId   当前用户的id
+     * @param friendId 和当前用户具有朋友关系的用户id
+     * @return 所有二度人脉用户列表
+     */
+    @GetMapping("/twoDegree")
+    @ResponseBody
+    @ApiOperation("查询当前用户(userId)某个朋友(friendId)的朋友但和当前用户不是朋友关系的所有用户,即二度人脉")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "当前用户的Id"),
+            @ApiImplicitParam(name = "friendId", value = "朋友的Id")
+    })
+    public Response<List<User>> findTwoDegreeUsers(@RequestParam @NotNull(message = "userId") Long userId,
+                                                   @RequestParam @NotNull(message = "friendId") Long friendId) {
+
+        Response<List<User>> response;
+
+        try {
+            List<User> users = userService.findTwoDegreeUsers(userId, friendId);
+            response = Response.success(users);
+
+        } catch (Exception e) {
+            log.error("findTwoDegreeUsers error,userId:{},friendId:{}", userId, friendId);
+            response = Response.failed(e);
+        }
+        return response;
+    }
+
 
 }

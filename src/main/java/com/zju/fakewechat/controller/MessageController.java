@@ -4,6 +4,10 @@ import com.zju.fakewechat.domain.Message;
 import com.zju.fakewechat.model.response.Response;
 import com.zju.fakewechat.services.MsgService;
 import com.zju.fakewechat.services.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +27,7 @@ import java.util.List;
 @RequestMapping(value = "/msg")
 @Slf4j
 @Validated
+@Api("朋友圈动态相关接口")
 public class MessageController {
 
     @Autowired
@@ -34,6 +39,11 @@ public class MessageController {
 
     @PostMapping("/add")
     @ResponseBody
+    @ApiOperation("添加一条动态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId",value = "用户Id不能为空"),
+            @ApiImplicitParam(name = "content",value = "动态的文本内容,暂时不支持图片,不能为空")
+    })
     public Response<Message> addMsg(@RequestParam("userId") @NotNull(message = "userId不能为null!") Long userId,
                                     @RequestParam("content") @NotBlank(message = "content不能为空!") String content) {
 
@@ -53,6 +63,7 @@ public class MessageController {
 
     @GetMapping("/all")
     @ResponseBody
+    @ApiOperation("查询用户的所有动态消息,最新的在最前")
     public Response<List<Message>> findAllMsgsByUserId(@RequestParam("userId") @NotNull Long userId){
 
         Response<List<Message>> response;
@@ -72,6 +83,8 @@ public class MessageController {
 
     @PostMapping("/delete/{msgId}")
     @ResponseBody
+    @ApiOperation("删除一条动态")
+    @ApiImplicitParam(name ="msgId",value = "动态的id")
     public Response<Boolean> deleteMsg(@PathVariable("msgId") @NotNull Long msgId){
 
         Response<Boolean> response;

@@ -6,6 +6,7 @@ import com.zju.fakewechat.util.EncryptUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -84,5 +85,27 @@ public class UserService {
 
         return new ArrayList<>();
 
+    }
+
+    public List<User> findTwoDegreeUsers(Long userId, Long friendId) {
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(!userOptional.isPresent()){
+            throw new RuntimeException("用户不存在,id:"+userId);
+        }
+
+        Optional<User> friendOptional = userRepository.findById(friendId);
+        if(!friendOptional.isPresent()){
+            throw new RuntimeException("用户不存在,id:"+friendId);
+        }
+
+        List<User> friends = userOptional.get().getFriends();
+
+        List<User> friendsOfFriend = friendOptional.get().getFriends();
+
+        friendsOfFriend.removeAll(friends);
+        friendsOfFriend.remove(userOptional.get());
+
+        return friendsOfFriend;
     }
 }

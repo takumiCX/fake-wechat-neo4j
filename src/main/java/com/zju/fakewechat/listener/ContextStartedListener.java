@@ -48,19 +48,25 @@ public class ContextStartedListener implements ApplicationListener<ContextRefres
         //添加用户
         users.forEach(userRepository::save);
 
-        //添加朋友
+        //赵云和张飞、关羽是朋友
         zhaoyun.getFriends().add(zhangfei);
         zhaoyun.getFriends().add(guanyu);
 
-        //添加朋友
+        //关羽和张辽、徐晃是朋友
+        guanyu.getFriends().add(zhangliao);
+        guanyu.getFriends().add(xuhuang);
+
+        //张辽和徐晃是朋友、
         zhangliao.getFriends().add(xuhuang);
 
-        //添加动态
+        //赵云添加动态
         zhaoyun.getMessages().add(new Message("大家好,我叫赵云!",new Date()));
+        //张辽添加动态
         zhangliao.getMessages().add(new Message("大家好,我叫张辽!",new Date()));
 
         userRepository.save(zhaoyun);
         userRepository.save(zhangliao);
+        userRepository.save(guanyu);
 
     }
 }
