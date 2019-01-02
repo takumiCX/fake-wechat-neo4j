@@ -40,10 +40,6 @@ public class MessageController {
     @PostMapping("/add")
     @ResponseBody
     @ApiOperation("添加一条动态")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId",value = "用户Id不能为空"),
-            @ApiImplicitParam(name = "content",value = "动态的文本内容,暂时不支持图片,不能为空")
-    })
     public Response<Message> addMsg(@RequestParam("userId") @NotNull(message = "userId不能为null!") Long userId,
                                     @RequestParam("content") @NotBlank(message = "content不能为空!") String content) {
 
@@ -84,7 +80,6 @@ public class MessageController {
     @PostMapping("/delete/{msgId}")
     @ResponseBody
     @ApiOperation("删除一条动态")
-    @ApiImplicitParam(name ="msgId",value = "动态的id")
     public Response<Boolean> deleteMsg(@PathVariable("msgId") @NotNull Long msgId){
 
         Response<Boolean> response;

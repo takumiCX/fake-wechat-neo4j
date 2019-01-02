@@ -66,10 +66,6 @@ public class UserController {
     @PostMapping(value = "/register")
     @ResponseBody
     @ApiOperation("注册新用户")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userName", value = "用户名"),
-            @ApiImplicitParam(name = "password", value = "密码")
-    })
     public Response<User> register(@RequestParam("userName") @NotBlank(message = "userName不能为空!") String userName,
                                    @RequestParam("password") @NotBlank(message = "password不能为空!") String password) {
 
@@ -99,10 +95,6 @@ public class UserController {
     @PostMapping("/login")
     @ResponseBody
     @ApiOperation("用户登录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userName", value = "用户名"),
-            @ApiImplicitParam(name = "password", value = "密码")
-    })
     public Response<User> login(@RequestParam("userName") @NotBlank(message = "userName不能为空!") String userName,
                                 @RequestParam("password") @NotBlank(message = "password不能为空!") String password,
                                 HttpSession session) {
@@ -137,11 +129,6 @@ public class UserController {
     @PostMapping("/addFriend")
     @ResponseBody
     @ApiOperation("为当前用户添加朋友")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "当前登录用户的用户id"),
-            @ApiImplicitParam(name = "friendName", value = "要添加为朋友的用户名")
-    }
-    )
     public Response<Boolean> addFriend(@RequestParam("userId") @NotNull(message = "userId不能为null!") Long userId,
                                        @RequestParam("friendName") @NotBlank(message = "friendName不能为空!") String friendName) {
 
@@ -167,9 +154,6 @@ public class UserController {
     @GetMapping("/friends/")
     @ResponseBody
     @ApiOperation("查询和当前用户为朋友关系的所有用户")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "用户id")
-    })
     public Response<List<User>> listAllFriends(@RequestParam("userId") @NotNull(message = "userId不能为null!") Long userId) {
 
         Response<List<User>> response;
@@ -198,10 +182,6 @@ public class UserController {
     @GetMapping("/twoDegree")
     @ResponseBody
     @ApiOperation("查询当前用户(userId)某个朋友(friendId)的朋友但和当前用户不是朋友关系的所有用户,即二度人脉")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "当前用户的Id"),
-            @ApiImplicitParam(name = "friendId", value = "朋友的Id")
-    })
     public Response<List<User>> findTwoDegreeUsers(@RequestParam @NotNull(message = "userId") Long userId,
                                                    @RequestParam @NotNull(message = "friendId") Long friendId) {
 
