@@ -6,7 +6,6 @@ import com.zju.fakewechat.util.EncryptUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -107,5 +106,20 @@ public class UserService {
         friendsOfFriend.remove(userOptional.get());
 
         return friendsOfFriend;
+    }
+
+    public void save(User user){
+        try {
+
+            user.setPassword(EncryptUtils.encoderByMd5(user.getPassword()));
+            userRepository.save(user);
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 }

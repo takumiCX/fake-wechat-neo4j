@@ -4,6 +4,7 @@ import com.zju.fakewechat.domain.Message;
 import com.zju.fakewechat.domain.User;
 import com.zju.fakewechat.repositories.MsgRepository;
 import com.zju.fakewechat.repositories.UserRepository;
+import com.zju.fakewechat.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -26,6 +27,9 @@ public class ContextStartedListener implements ApplicationListener<ContextRefres
     @Autowired
     private MsgRepository msgRepository;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
 
@@ -46,7 +50,7 @@ public class ContextStartedListener implements ApplicationListener<ContextRefres
         users.add(zhangliao);
         users.add(xuhuang);
         //添加用户
-        users.forEach(userRepository::save);
+        users.forEach(userService::save);
 
         //赵云和张飞、关羽是朋友
         zhaoyun.getFriends().add(zhangfei);
