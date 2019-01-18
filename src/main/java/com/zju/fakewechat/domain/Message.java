@@ -37,6 +37,8 @@ public class Message {
     @NotBlank(message = "内容不能为空")
     private String content;
 
+    private String images;
+
     //时间
     private Date time;
 

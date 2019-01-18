@@ -2,21 +2,26 @@ package com.zju.fakewechat.controller;
 
 import com.zju.fakewechat.domain.Message;
 import com.zju.fakewechat.model.response.Response;
+import com.zju.fakewechat.services.ImageService;
 import com.zju.fakewechat.services.MsgService;
 import com.zju.fakewechat.services.UserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Iterator;
 import java.util.List;
+import java.util.StringJoiner;
 
 
 /**
@@ -36,16 +41,41 @@ public class MessageController {
     @Autowired
     private MsgService msgService;
 
+    @Autowired
+    private ImageService imageService;
+
 
     @PostMapping("/add")
     @ResponseBody
     @ApiOperation("添加一条动态")
     public Response<Message> addMsg(@RequestParam("userId") @NotNull(message = "userId不能为null!") Long userId,
-                                    @RequestParam("content") @NotBlank(message = "content不能为空!") String content) {
+                                    @RequestParam("content") @NotBlank(message = "content不能为空!") String content,
+                                    HttpServletRequest request) {
+
+        CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+
+        String imagePathSepComma="";
+
+        if (resolver.isMultipart(request)) {
+
+            StringJoiner joiner = new StringJoiner(",");
+
+            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+
+            Iterator<String> iterator = multiRequest.getFileNames();
+
+            while (iterator.hasNext()) {
+                MultipartFile file = multiRequest.getFile(iterator.next());
+                String path = imageService.handle(file);
+                log.info(path);
+                joiner.add(path);
+            }
+            imagePathSepComma=joiner.toString();
+        }
 
         Response<Message> response;
         try {
-            Message message = msgService.add(userId, content);
+            Message message = msgService.add(userId, content,imagePathSepComma);
 
             response = Response.success(message);
 

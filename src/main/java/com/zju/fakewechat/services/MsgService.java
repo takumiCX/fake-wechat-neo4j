@@ -31,7 +31,7 @@ public class MsgService {
 
 
     @Transactional
-    public Message add(long userId, String content) {
+    public Message add(long userId, String content,String imagePath) {
 
 
         Optional<User> userOptional = userRepository.findById(userId);
@@ -44,6 +44,7 @@ public class MsgService {
 
         Message msg = new Message();
 
+        msg.setImages(imagePath);
         msg.setContent(content);
         msg.setTime(new Date());
         user.getMessages().add(msg);
