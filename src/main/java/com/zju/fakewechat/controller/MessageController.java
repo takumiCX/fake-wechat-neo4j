@@ -62,10 +62,11 @@ public class MessageController {
 
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
 
-            Iterator<String> iterator = multiRequest.getFileNames();
+            Iterator<MultipartFile> images = multiRequest.getFiles("images").iterator();
 
-            while (iterator.hasNext()) {
-                MultipartFile file = multiRequest.getFile(iterator.next());
+            while (images.hasNext()) {
+                MultipartFile file = images.next();
+//                MultipartFile file = multiRequest.getFile(images.next());
                 String path = imageService.handle(file);
                 log.info(path);
                 joiner.add(path);
