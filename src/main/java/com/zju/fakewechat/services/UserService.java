@@ -122,4 +122,11 @@ public class UserService {
             throw new RuntimeException(e);
         }
     }
+
+
+    public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+
+        String guanyu = EncryptUtils.encoderByMd5("guanyu");
+        System.out.println(guanyu);
+    }
 }

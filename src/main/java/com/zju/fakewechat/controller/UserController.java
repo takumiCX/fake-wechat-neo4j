@@ -43,6 +43,7 @@ public class UserController {
     @ResponseBody
     @ApiOperation(value = "校验用户名是否可用,true:可用;false:该用户名已经存在,不可用")
     @ApiResponse(code = 200, message = "success=true")
+    @CrossOrigin(origins = "http://localhost:3000")
     public Response<Boolean> check(@RequestParam("userName") @NotBlank(message = "用户名不能为空!") String userName) {
 
         Response<Boolean> response;
@@ -66,6 +67,7 @@ public class UserController {
     @PostMapping(value = "/register")
     @ResponseBody
     @ApiOperation("注册新用户")
+    @CrossOrigin(origins = "http://localhost:3000")
     public Response<User> register(@RequestParam("userName") @NotBlank(message = "userName不能为空!") String userName,
                                    @RequestParam("password") @NotBlank(message = "password不能为空!") String password) {
 
@@ -95,6 +97,7 @@ public class UserController {
     @PostMapping("/login")
     @ResponseBody
     @ApiOperation("用户登录")
+    @CrossOrigin(origins = "http://localhost:3000")
     public Response<User> login(@RequestParam("userName") @NotBlank(message = "userName不能为空!") String userName,
                                 @RequestParam("password") @NotBlank(message = "password不能为空!") String password,
                                 HttpSession session) {
@@ -129,6 +132,7 @@ public class UserController {
     @PostMapping("/addFriend")
     @ResponseBody
     @ApiOperation("为当前用户添加朋友")
+    @CrossOrigin(origins = "http://localhost:3000")
     public Response<Boolean> addFriend(@RequestParam("userId") @NotNull(message = "userId不能为null!") Long userId,
                                        @RequestParam("friendName") @NotBlank(message = "friendName不能为空!") String friendName) {
 
@@ -142,6 +146,7 @@ public class UserController {
             response = Response.failed(e);
         }
         return response;
+
     }
 
 
@@ -154,6 +159,7 @@ public class UserController {
     @GetMapping("/friends/")
     @ResponseBody
     @ApiOperation("查询和当前用户为朋友关系的所有用户")
+    @CrossOrigin(origins = "http://localhost:3000")
     public Response<List<User>> listAllFriends(@RequestParam("userId") @NotNull(message = "userId不能为null!") Long userId) {
 
         Response<List<User>> response;
@@ -182,6 +188,7 @@ public class UserController {
     @GetMapping("/twoDegree")
     @ResponseBody
     @ApiOperation("查询当前用户(userId)某个朋友(friendId)的朋友但和当前用户不是朋友关系的所有用户,即二度人脉")
+    @CrossOrigin(origins = "http://localhost:3000")
     public Response<List<User>> findTwoDegreeUsers(@RequestParam @NotNull(message = "userId") Long userId,
                                                    @RequestParam @NotNull(message = "friendId") Long friendId) {
 

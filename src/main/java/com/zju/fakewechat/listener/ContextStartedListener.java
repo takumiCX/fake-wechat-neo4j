@@ -38,39 +38,52 @@ public class ContextStartedListener implements ApplicationListener<ContextRefres
         msgRepository.deleteAll();
 
         ArrayList<User> users = new ArrayList<>();
+        //蜀国
         User guanyu = new User("关羽", "guanyu");
         User zhangfei = new User("张飞", "zhangfei");
-        User zhaoyun = new User("赵云", "zhaoyun");
+        User kongming = new User("孔明", "kongming");
+
+        //魏国
         User zhangliao = new User("张辽", "zhangliao");
-        User xuhuang = new User("徐晃", "xuhuang");
+        User caocao = new User("曹操", "caocao");
+
+        //吴国
+        User lusu = new User("鲁肃", "lusu");
+        User zhouyu = new User("周瑜", "zhouyu");
 
         users.add(guanyu);
         users.add(zhangfei);
-        users.add(zhaoyun);
+        users.add(kongming);
         users.add(zhangliao);
-        users.add(xuhuang);
+        users.add(caocao);
+        users.add(lusu);
+        users.add(zhouyu);
+
+        //孔明和张飞、关羽,鲁肃是朋友
+        kongming.getFriends().add(zhangfei);
+        kongming.getFriends().add(guanyu);
+        kongming.getFriends().add(lusu);
+
+
+        //关羽和张飞,孔明,张辽,曹操是朋友
+        guanyu.getFriends().add(kongming);
+        guanyu.getFriends().add(zhangfei);
+        guanyu.getFriends().add(zhangliao);
+        guanyu.getFriends().add(caocao);
+
+
+        //曹操和张辽是朋友
+        caocao.getFriends().add(zhangliao);
+
+        //周瑜和鲁肃是朋友
+        zhouyu.getFriends().add(lusu);
+
+
+
+        //关羽添加动态
+        guanyu.getMessages().add(new Message("大家好,我叫关羽!",new Date()));
+
         //添加用户
         users.forEach(userService::save);
-
-        //赵云和张飞、关羽是朋友
-        zhaoyun.getFriends().add(zhangfei);
-        zhaoyun.getFriends().add(guanyu);
-
-        //关羽和张辽、徐晃是朋友
-        guanyu.getFriends().add(zhangliao);
-        guanyu.getFriends().add(xuhuang);
-
-        //张辽和徐晃是朋友、
-        zhangliao.getFriends().add(xuhuang);
-
-        //赵云添加动态
-        zhaoyun.getMessages().add(new Message("大家好,我叫赵云!",new Date()));
-        //张辽添加动态
-        zhangliao.getMessages().add(new Message("大家好,我叫张辽!",new Date()));
-
-        userRepository.save(zhaoyun);
-        userRepository.save(zhangliao);
-        userRepository.save(guanyu);
-
     }
 }

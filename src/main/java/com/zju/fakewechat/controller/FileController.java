@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,9 +26,10 @@ import java.io.*;
 @Api("图片上传相关接口")
 public class FileController {
 
-    @GetMapping("/image")
+    @GetMapping("/imt'gage")
     @ResponseBody
     @ApiOperation("根据文件名下载图片")
+    @CrossOrigin(origins = "http://localhost:3000")
     public Response<Boolean> downloadImage(@RequestParam("image") @NotBlank(message = "Imagepath cant be empty!") String image, HttpServletResponse response) {
 
         Response<Boolean> res;

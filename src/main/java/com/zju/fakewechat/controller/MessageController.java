@@ -45,9 +45,10 @@ public class MessageController {
     private ImageService imageService;
 
 
-    @PostMapping("/add")
+    @RequestMapping("/add")
     @ResponseBody
     @ApiOperation("添加一条动态")
+    @CrossOrigin(origins = "http://localhost:3000")
     public Response<Message> addMsg(@RequestParam("userId") @NotNull(message = "userId不能为null!") Long userId,
                                     @RequestParam("content") @NotBlank(message = "content不能为空!") String content,
                                     HttpServletRequest request) {
@@ -91,6 +92,7 @@ public class MessageController {
     @GetMapping("/all")
     @ResponseBody
     @ApiOperation("查询用户的所有动态消息,最新的在最前")
+    @CrossOrigin(origins = "http://localhost:3000")
     public Response<List<Message>> findAllMsgsByUserId(@RequestParam("userId") @NotNull Long userId){
 
         Response<List<Message>> response;
@@ -111,6 +113,7 @@ public class MessageController {
     @PostMapping("/delete/{msgId}")
     @ResponseBody
     @ApiOperation("删除一条动态")
+    @CrossOrigin(origins = "http://localhost:3000")
     public Response<Boolean> deleteMsg(@PathVariable("msgId") @NotNull Long msgId){
 
         Response<Boolean> response;
